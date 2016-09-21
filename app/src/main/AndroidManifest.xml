@@ -19,6 +19,7 @@
         <activity android:name=".ClockActivity"></activity>
         <activity android:name=".NewsFeedActivity"></activity>
         <activity android:name=".TipActivity"></activity>
+        <activity android:name=".AddClockActivity"></activity>
     </application>
 
 </manifest>
