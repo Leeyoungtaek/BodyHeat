@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.naxesa.bodyheat.MainActivity">
+
+    <Button
+        android:id="@+id/body_heat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="체온측정" />
+
+    <Button
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="약 알림" />
+
+    <Button
+        android:id="@+id/news_feed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="뉴스피드" />
+
+    <Button
+        android:id="@+id/tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="열 관리 팁" />
+</LinearLayout>
