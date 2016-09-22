@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -58,8 +59,10 @@ public class AddClockActivity extends Activity implements TimePicker.OnTimeChang
     }
 
     private void setAlarm() {
-        gregorianCalendar.add(Calendar.DAY_OF_MONTH, 1);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, gregorianCalendar.getTimeInMillis(), pendingIntent());
+        if(gregorianCalendar.getTimeInMillis()<System.currentTimeMillis()) {
+            gregorianCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, gregorianCalendar.getTimeInMillis(), 24 * 60 * 60 * 1000, pendingIntent());
     }
 
     private PendingIntent pendingIntent() {

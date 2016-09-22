@@ -22,9 +22,22 @@
         android:inputType="number"
         android:digits="0123456789"/>
 
+    <Button
+        android:id="@+id/add_medicine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Add Medicine"/>
+
     <TimePicker
         android:id="@+id/time_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/set"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="set"/>
 
 </LinearLayout>
