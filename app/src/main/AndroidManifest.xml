@@ -16,10 +16,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".BodyHeatActivity"></activity>
-        <activity android:name=".ClockActivity"></activity>
+        <activity android:name=".Clock.ClockActivity"></activity>
         <activity android:name=".NewsFeedActivity"></activity>
         <activity android:name=".TipActivity"></activity>
-        <activity android:name=".AddClockActivity"></activity>
+        <activity android:name=".Clock.AddClockActivity"></activity>
+        <receiver android:name=".Clock.ClockReceiver">
+            <intent-filter>
+                <action android:name="com.naxesa.bodyheat"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
