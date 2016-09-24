@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.naxesa.bodyheat.BodyHeat.BodyHeatActivity;
 import com.naxesa.bodyheat.Clock.ClockActivity;
+import com.naxesa.bodyheat.Tip.TipActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

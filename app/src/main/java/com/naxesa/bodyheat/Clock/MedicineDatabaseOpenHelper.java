@@ -12,6 +12,7 @@ public class MedicineDatabaseOpenHelper extends SQLiteOpenHelper{
 
     private final String clockTable = "clock";
     private final String medicineTable = "medicine";
+    private final String requestCodeTable = "request";
 
     public MedicineDatabaseOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -21,12 +22,13 @@ public class MedicineDatabaseOpenHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         String clockSql = "create table " + clockTable + " (" +
                 "_id integer primary key autoincrement, " +
-                "name text, " +
-                "date integer);";
+                "name text" + ");";
         String medicineSql = "create table " + medicineTable + " (" +
                 "key integer, " +
                 "hour integer, " +
-                "minute integer);";
+                "minute integer, " +
+                "request_code integer, " +
+                "date integer);";
         db.execSQL(clockSql);
         db.execSQL(medicineSql);
     }

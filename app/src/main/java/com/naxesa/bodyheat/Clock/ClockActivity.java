@@ -25,6 +25,7 @@ public class ClockActivity extends Activity implements View.OnClickListener{
 
     // Const
     private final String TAG = "ClockActivity";
+    private final int REQUEST_CODE = 1000;
 
     // Views
     private Button btnAdd;
@@ -52,7 +53,7 @@ public class ClockActivity extends Activity implements View.OnClickListener{
         btnAdd.setOnClickListener(this);
 
         // Open Database and Select
-        helper = new MedicineDatabaseOpenHelper(ClockActivity.this, "clock.db", null, 1);
+        helper = new MedicineDatabaseOpenHelper(ClockActivity.this, "clock.db", null, 2);
         select();
 
         // RecyclerView
@@ -63,6 +64,8 @@ public class ClockActivity extends Activity implements View.OnClickListener{
         adapter = new RecyclerViewClockAdapter(ClockActivity.this, names, new DeleteClockEventListener() {
             @Override
             public void DeleteClockEvent(int position) {
+                String name = names.get(position);
+                delete(name);
                 names.remove(position);
             }
         });
@@ -75,11 +78,11 @@ public class ClockActivity extends Activity implements View.OnClickListener{
         switch (view.getId()){
             case R.id.add:
                 intent = new Intent(getApplicationContext(), AddClockActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
                 break;
             default:
                 break;
         }
-        startActivity(intent);
     }
 
     private void select(){
@@ -88,6 +91,42 @@ public class ClockActivity extends Activity implements View.OnClickListener{
         Cursor cursor = db.query("clock", null, null, null, null, null, null);
         while(cursor.moveToNext()){
             names.add(cursor.getString(cursor.getColumnIndex("name")));
+        }
+    }
+
+    private void delete(String name){
+        int id= 0;
+        db = helper.getReadableDatabase();
+        Cursor c = db.query("clock", null, null, null, null, null, null);
+        while(c.moveToNext()){
+            if(name.equals(c.getString(c.getColumnIndex("name")))){
+                id = c.getInt(c.getColumnIndex("_id"));
+                break;
+            }
+        }
+        db = helper.getWritableDatabase();
+        db.delete("clock", "name=?", new String[]{name});
+        db.delete("medicine", "key=?", new String[]{String.valueOf(id)});
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case REQUEST_CODE:
+                if(resultCode==RESULT_OK){
+                    select();
+                    adapter = new RecyclerViewClockAdapter(ClockActivity.this, names, new DeleteClockEventListener() {
+                        @Override
+                        public void DeleteClockEvent(int position) {
+                            names.remove(position);
+                        }
+                    });
+                    recyclerView.setAdapter(adapter);
+                }
+                break;
+            default:
+                break;
         }
     }
 }

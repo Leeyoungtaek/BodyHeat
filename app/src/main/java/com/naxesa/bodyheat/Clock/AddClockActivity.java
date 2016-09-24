@@ -72,7 +72,7 @@ public class AddClockActivity extends Activity {
         recyclerView.setLayoutManager(layoutManager);
 
         // Open Database
-        helper = new MedicineDatabaseOpenHelper(AddClockActivity.this, "clock.db", null, 1);
+        helper = new MedicineDatabaseOpenHelper(AddClockActivity.this, "clock.db", null, 2);
 
         // View Event
         btnAddMedicine.setOnClickListener(new View.OnClickListener() {
@@ -113,8 +113,10 @@ public class AddClockActivity extends Activity {
                 } else if (gregorianCalendars.size() <= 0) {
                     Toast.makeText(AddClockActivity.this, "시간을 설정해주세요", Toast.LENGTH_SHORT).show();
                 }
-                insertDatabase(name, date);
-                insertDatabase(selectId(name));
+                insertDatabase(name);
+                insertDatabase(selectId(name), date);
+                setAlarms(name);
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -126,16 +128,15 @@ public class AddClockActivity extends Activity {
         gregorianCalendars = new ArrayList<GregorianCalendar>();
     }
 
-    private void insertDatabase(String name, int date) {
+    private void insertDatabase(String name) {
         db = helper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put("name", name);
-        values.put("date", date);
         db.insert("clock", null, values);
     }
 
-    private void insertDatabase(int id) {
+    private void insertDatabase(int id, int date) {
         db = helper.getWritableDatabase();
         ContentValues values;
         for (int i = 0; i < gregorianCalendars.size(); i++) {
@@ -143,6 +144,7 @@ public class AddClockActivity extends Activity {
             values.put("key", id);
             values.put("hour", gregorianCalendars.get(i).get(Calendar.HOUR_OF_DAY));
             values.put("minute", gregorianCalendars.get(i).get(Calendar.MINUTE));
+            values.put("date", date);
             db.insert("medicine", null, values);
         }
     }
@@ -159,20 +161,27 @@ public class AddClockActivity extends Activity {
         return 0;
     }
 
-    private void setAlarm() {
+    private void setAlarms(String name){
+        for (int i = 0; i<gregorianCalendars.size(); i++){
+            setAlarm(name, 0, gregorianCalendars.get(i));
+        }
+    }
+
+    private void setAlarm(String name, int requestCode, GregorianCalendar gregorianCalendar) {
         if (gregorianCalendar.getTimeInMillis() < System.currentTimeMillis()) {
             gregorianCalendar.add(Calendar.DAY_OF_MONTH, 1);
         }
-        alarmManager.set(AlarmManager.RTC_WAKEUP, gregorianCalendar.getTimeInMillis(), pendingIntent());
+        alarmManager.set(AlarmManager.RTC_WAKEUP, gregorianCalendar.getTimeInMillis(), pendingIntent(name, requestCode));
+    }
+
+    private PendingIntent pendingIntent(String name, int requestCode) {
+        Intent intent = new Intent("com.naxesa.bodyheat");
+        intent.putExtra("name", name);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, intent, 0);
+        return pendingIntent;
     }
 
     public void setGregorianCalendar(GregorianCalendar gregorianCalendar) {
         this.gregorianCalendar = gregorianCalendar;
-    }
-
-    private PendingIntent pendingIntent() {
-        Intent intent = new Intent("com.naxesa.bodyheat");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        return pendingIntent;
     }
 }
