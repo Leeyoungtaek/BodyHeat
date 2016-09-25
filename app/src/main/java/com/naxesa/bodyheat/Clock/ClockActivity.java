@@ -1,6 +1,9 @@
 package com.naxesa.bodyheat.Clock;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,7 +24,7 @@ import java.util.ArrayList;
  * Created by DSM_055 on 2016-09-21.
  */
 
-public class ClockActivity extends Activity implements View.OnClickListener{
+public class ClockActivity extends Activity implements View.OnClickListener {
 
     // Const
     private final String TAG = "ClockActivity";
@@ -47,7 +50,7 @@ public class ClockActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_clock);
 
         // View Reference
-        btnAdd = (Button)findViewById(R.id.add);
+        btnAdd = (Button) findViewById(R.id.add);
 
         // View Event
         btnAdd.setOnClickListener(this);
@@ -57,7 +60,7 @@ public class ClockActivity extends Activity implements View.OnClickListener{
         select();
 
         // RecyclerView
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(ClockActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -75,7 +78,7 @@ public class ClockActivity extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         Intent intent = null;
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.add:
                 intent = new Intent(getApplicationContext(), AddClockActivity.class);
                 startActivityForResult(intent, REQUEST_CODE);
@@ -85,36 +88,41 @@ public class ClockActivity extends Activity implements View.OnClickListener{
         }
     }
 
-    private void select(){
+    private void select() {
         names = new ArrayList<String>();
         db = helper.getReadableDatabase();
         Cursor cursor = db.query("clock", null, null, null, null, null, null);
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             names.add(cursor.getString(cursor.getColumnIndex("name")));
         }
     }
 
-    private void delete(String name){
-        int id= 0;
-        db = helper.getReadableDatabase();
-        Cursor c = db.query("clock", null, null, null, null, null, null);
-        while(c.moveToNext()){
-            if(name.equals(c.getString(c.getColumnIndex("name")))){
-                id = c.getInt(c.getColumnIndex("_id"));
-                break;
-            }
-        }
+    private void delete(String name) {
         db = helper.getWritableDatabase();
         db.delete("clock", "name=?", new String[]{name});
-        db.delete("medicine", "key=?", new String[]{String.valueOf(id)});
+        int cnt = 0;
+        for (int i = 0; i < ClockData.intentNames.size() - cnt; i++) {
+            if (ClockData.intentNames.get(i).equals(name)) {
+                releaseAlarm(ClockData.pendingIntents.get(i));
+                ClockData.intentNames.remove(i);
+                ClockData.pendingIntents.remove(i);
+                cnt++;
+                i--;
+            }
+        }
+    }
+
+    private void releaseAlarm(PendingIntent pendingIntent) {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_CODE:
-                if(resultCode==RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     select();
                     adapter = new RecyclerViewClockAdapter(ClockActivity.this, names, new DeleteClockEventListener() {
                         @Override

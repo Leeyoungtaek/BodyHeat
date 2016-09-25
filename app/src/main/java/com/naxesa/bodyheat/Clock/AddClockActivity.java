@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -114,8 +115,7 @@ public class AddClockActivity extends Activity {
                     Toast.makeText(AddClockActivity.this, "시간을 설정해주세요", Toast.LENGTH_SHORT).show();
                 }
                 insertDatabase(name);
-                insertDatabase(selectId(name), date);
-                setAlarms(name);
+                setAlarms(name, date);
                 setResult(RESULT_OK);
                 finish();
             }
@@ -136,48 +136,28 @@ public class AddClockActivity extends Activity {
         db.insert("clock", null, values);
     }
 
-    private void insertDatabase(int id, int date) {
-        db = helper.getWritableDatabase();
-        ContentValues values;
-        for (int i = 0; i < gregorianCalendars.size(); i++) {
-            values = new ContentValues();
-            values.put("key", id);
-            values.put("hour", gregorianCalendars.get(i).get(Calendar.HOUR_OF_DAY));
-            values.put("minute", gregorianCalendars.get(i).get(Calendar.MINUTE));
-            values.put("date", date);
-            db.insert("medicine", null, values);
-        }
-    }
-
-    private int selectId(String name){
-        db = helper.getReadableDatabase();
-        Cursor cursor = db.query("clock", null, null, null, null, null, null);
-
-        while(cursor.moveToNext()){
-            if(name.equals(cursor.getString(cursor.getColumnIndex("name")))){
-                return cursor.getInt(cursor.getColumnIndex("_id"));
-            }
-        }
-        return 0;
-    }
-
-    private void setAlarms(String name){
+    private void setAlarms(String name, int date){
         for (int i = 0; i<gregorianCalendars.size(); i++){
-            setAlarm(name, 0, gregorianCalendars.get(i));
+            int requestCode = (int) (System.currentTimeMillis()%10000 + i*10000);
+            setAlarm(name, date, requestCode, gregorianCalendars.get(i));
         }
     }
 
-    private void setAlarm(String name, int requestCode, GregorianCalendar gregorianCalendar) {
+    private void setAlarm(String name, int date, int requestCode, GregorianCalendar gregorianCalendar) {
         if (gregorianCalendar.getTimeInMillis() < System.currentTimeMillis()) {
             gregorianCalendar.add(Calendar.DAY_OF_MONTH, 1);
         }
-        alarmManager.set(AlarmManager.RTC_WAKEUP, gregorianCalendar.getTimeInMillis(), pendingIntent(name, requestCode));
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, gregorianCalendar.getTimeInMillis(), 60*1000, pendingIntent(name, date, requestCode));
     }
 
-    private PendingIntent pendingIntent(String name, int requestCode) {
+    private PendingIntent pendingIntent(String name, int date, int requestCode) {
         Intent intent = new Intent("com.naxesa.bodyheat");
         intent.putExtra("name", name);
+        intent.putExtra("date", date);
+        intent.putExtra("requestcode", requestCode);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, intent, 0);
+        ClockData.pendingIntents.add(pendingIntent);
+        ClockData.intentNames.add(name);
         return pendingIntent;
     }
 

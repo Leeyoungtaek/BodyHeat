@@ -4,6 +4,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.naxesa.bodyheat.MainActivity">
+    tools:context="com.naxesa.bodyheat.BodyHeat.BodyHeatActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="증상 입력"/>
+
+    <CheckBox
+        android:id="@+id/option1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="감기"/>
+    <CheckBox
+        android:id="@+id/option2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="두통"/>
+    <CheckBox
+        android:id="@+id/option3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="콧물"/>
+    <CheckBox
+        android:id="@+id/option4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="열"/>
+    <CheckBox
+        android:id="@+id/option5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="가래"/>
+
+    <Button
+        android:id="@+id/check_body_heat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="체온 측정"/>
+
+    <TextView
+        android:id="@+id/body_heat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/OK"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="확인"/>
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.naxesa.bodyheat.Clock;
+package com.naxesa.bodyheat.NewsFeed;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,25 +8,26 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Lee young teak on 2016-09-22.
  */
 
-public class MedicineDatabaseOpenHelper extends SQLiteOpenHelper{
+public class NewsFeedDatabaseOpenHelper extends SQLiteOpenHelper{
 
-    private final String clockTable = "clock";
+    private final String Table = "news_feed";
 
-    public MedicineDatabaseOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public NewsFeedDatabaseOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String clockSql = "create table " + clockTable + " (" +
+        String sql = "create table " + Table + " (" +
                 "_id integer primary key autoincrement, " +
-                "name text" + ");";
-        db.execSQL(clockSql);
+                "date text, " +
+                "content text" + ");";
+        db.execSQL(sql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String clockSql = "drop table if exists " + clockTable;
+        String clockSql = "drop table if exists " + Table;
         db.execSQL(clockSql);
         onCreate(db);
     }
