@@ -27,7 +27,7 @@ public class NewsFeedActivity extends Activity {
     private NewsFeedDatabaseOpenHelper helper;
 
     // ArrayList
-    private ArrayList<String> dates, contents;
+    private ArrayList<String> dates, contents, states;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,8 +42,9 @@ public class NewsFeedActivity extends Activity {
         helper = new NewsFeedDatabaseOpenHelper(this, "news_feed.db", null, 1);
         dates = new ArrayList<String>();
         contents = new ArrayList<String>();
+        states = new ArrayList<String>();
         select();
-        adapter = new RecyclerViewNewsFeedAdapter(this, dates, contents);
+        adapter = new RecyclerViewNewsFeedAdapter(this, dates, contents, states);
         recycleView.setAdapter(adapter);
     }
 
@@ -51,6 +52,7 @@ public class NewsFeedActivity extends Activity {
         db = helper.getReadableDatabase();
         Cursor cursor = db.query("news_feed", null, null, null, null, null, null);
         while(cursor.moveToNext()){
+            states.add(0, cursor.getString(cursor.getColumnIndex("state")));
             dates.add(0, cursor.getString(cursor.getColumnIndex("date")));
             contents.add(0, cursor.getString(cursor.getColumnIndex("content")));
         }

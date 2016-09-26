@@ -2,6 +2,7 @@ package com.naxesa.bodyheat.NewsFeed;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.naxesa.bodyheat.R;
@@ -13,9 +14,11 @@ import com.naxesa.bodyheat.R;
 public class NewsFeedHolder extends RecyclerView.ViewHolder {
 
     TextView date, content;
+    ImageView image;
 
     public NewsFeedHolder(View itemView) {
         super(itemView);
+        image = (ImageView)itemView.findViewById(R.id.image);
         date = (TextView)itemView.findViewById(R.id.date);
         content = (TextView)itemView.findViewById(R.id.content);
     }

@@ -20,6 +20,7 @@ public class NewsFeedDatabaseOpenHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         String sql = "create table " + Table + " (" +
                 "_id integer primary key autoincrement, " +
+                "state text, " +
                 "date text, " +
                 "content text" + ");";
         db.execSQL(sql);

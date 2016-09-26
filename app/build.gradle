@@ -29,4 +29,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.+'
     testCompile 'junit:junit:4.12'
     compile 'com.google.android.gms:play-services:7.5.0'
+    compile 'com.github.clans:fab:1.6.4'
+    compile 'com.github.florent37:materialtextfield:1.0.5'
 }

@@ -3,6 +3,7 @@ package com.naxesa.bodyheat.Clock;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.naxesa.bodyheat.Clock.AddClockActivity;
 import com.naxesa.bodyheat.Clock.Listener.DeleteClockEventListener;
 import com.naxesa.bodyheat.R;
@@ -31,7 +33,7 @@ public class ClockActivity extends Activity implements View.OnClickListener {
     private final int REQUEST_CODE = 1000;
 
     // Views
-    private Button btnAdd;
+    private FloatingActionButton btnAdd;
 
     // RecyclerView
     private RecyclerView recyclerView;
@@ -50,7 +52,7 @@ public class ClockActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_clock);
 
         // View Reference
-        btnAdd = (Button) findViewById(R.id.add);
+        btnAdd = (FloatingActionButton) findViewById(R.id.add);
 
         // View Event
         btnAdd.setOnClickListener(this);
@@ -99,22 +101,7 @@ public class ClockActivity extends Activity implements View.OnClickListener {
 
     private void delete(String name) {
         db = helper.getWritableDatabase();
-        db.delete("clock", "name=?", new String[]{name});
-        int cnt = 0;
-        for (int i = 0; i < ClockData.intentNames.size() - cnt; i++) {
-            if (ClockData.intentNames.get(i).equals(name)) {
-                releaseAlarm(ClockData.pendingIntents.get(i));
-                ClockData.intentNames.remove(i);
-                ClockData.pendingIntents.remove(i);
-                cnt++;
-                i--;
-            }
-        }
-    }
-
-    private void releaseAlarm(PendingIntent pendingIntent) {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
+        db.execSQL("delete from clock where name ='"+name+"'");
     }
 
     @Override
@@ -127,6 +114,8 @@ public class ClockActivity extends Activity implements View.OnClickListener {
                     adapter = new RecyclerViewClockAdapter(ClockActivity.this, names, new DeleteClockEventListener() {
                         @Override
                         public void DeleteClockEvent(int position) {
+                            String name = names.get(position);
+                            delete(name);
                             names.remove(position);
                         }
                     });

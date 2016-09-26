@@ -7,27 +7,54 @@
     android:orientation="vertical"
     tools:context="com.naxesa.bodyheat.MainActivity">
 
-    <Button
-        android:id="@+id/body_heat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="체온측정" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/clock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="약 알림" />
+        <ImageButton
+            android:id="@+id/body_heat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/body_heat" />
 
-    <Button
-        android:id="@+id/news_feed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="뉴스피드" />
+        <ImageButton
+            android:id="@+id/clock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/alarm" />
 
-    <Button
-        android:id="@+id/tip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="열 관리 팁" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/news_feed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/newsfeed" />
+
+        <ImageButton
+            android:id="@+id/tip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/tip" />
+
+    </LinearLayout>
 </LinearLayout>

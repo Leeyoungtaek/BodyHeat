@@ -3,16 +3,24 @@ package com.naxesa.bodyheat.BodyHeat;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationListener;
 import com.naxesa.bodyheat.BodyHeat.Map.MapActivity;
 import com.naxesa.bodyheat.NewsFeed.NewsFeedDatabaseOpenHelper;
 import com.naxesa.bodyheat.R;
@@ -38,9 +46,38 @@ public class BodyHeatActivity extends Activity implements View.OnClickListener{
     private SQLiteDatabase db;
     private NewsFeedDatabaseOpenHelper helper;
 
+    // Location
+    LocationManager locationManager;
+    android.location.LocationListener locationListener;
+    double Latitude, Longitude;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_body_heat);
+
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new android.location.LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Latitude = location.getLatitude();
+                Longitude = location.getLongitude();
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
 
         // View Reference
         option1 = (CheckBox)findViewById(R.id.option1);
@@ -55,6 +92,14 @@ public class BodyHeatActivity extends Activity implements View.OnClickListener{
         // View Event
         btnCheckBodyheat.setOnClickListener(this);
         btnOK.setOnClickListener(this);
+
+        //GPS security exception
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION))
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 3);
+            else
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 3);
+        }
 
         helper = new NewsFeedDatabaseOpenHelper(this, "news_feed.db", null, 1);
     }
@@ -119,14 +164,26 @@ public class BodyHeatActivity extends Activity implements View.OnClickListener{
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(BodyHeatActivity.this, "Yes", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+//                Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+                if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION))
+                        ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 2);
+                    else
+                        ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 2);
+                }
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, (android.location.LocationListener) locationListener);
+                Uri gmmIntentUri = Uri.parse("geo:" + Latitude + ", " + Longitude + "?q=" + Uri.encode("이비인후과"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                intent.setPackage("com.google.android.apps.maps");
                 startActivity(intent);
+                finish();
             }
         }).setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(BodyHeatActivity.this, "No", Toast.LENGTH_SHORT).show();
                 dialog.cancel();
+                finish();
             }
         });
         AlertDialog alert = alertDialogBuilder.create();
@@ -144,8 +201,40 @@ public class BodyHeatActivity extends Activity implements View.OnClickListener{
         String content = "체온 측정 : " + bodyHeatValue + "도";
 
         ContentValues values = new ContentValues();
+        values.put("state", "body_heat");
         values.put("date", date);
         values.put("content", content);
         db.insert("news_feed", null, values);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //GPS security exception
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION))
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 2);
+            else
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 2);
+        }
+        locationManager.removeUpdates((android.location.LocationListener) locationListener);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case 3:
+                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                }else{
+                    finish();
+                }
+                break;
+            default:
+                Toast.makeText(this, "권한을 설정해주세요.", Toast.LENGTH_SHORT).show();
+                finish();
+                break;
+        }
     }
 }

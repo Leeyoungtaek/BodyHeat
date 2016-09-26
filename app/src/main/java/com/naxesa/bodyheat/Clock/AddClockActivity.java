@@ -134,34 +134,40 @@ public class AddClockActivity extends Activity {
         ContentValues values = new ContentValues();
         values.put("name", name);
         db.insert("clock", null, values);
+        for(int i = 0; i<gregorianCalendars.size(); i++){
+            values = new ContentValues();
+            values.put("name", name);
+            values.put("date", String.valueOf(gregorianCalendars.get(i).getTimeInMillis()));
+            db.insert("medicine", null, values);
+        }
+    }
+
+    public void setGregorianCalendar(GregorianCalendar gregorianCalendar) {
+        this.gregorianCalendar = gregorianCalendar;
+    }
+
+    private void setAlarm(String name, int date, int requestCode, String time, GregorianCalendar gregorianCalendar) {
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        if (gregorianCalendar.getTimeInMillis() < System.currentTimeMillis()) {
+            gregorianCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        alarmManager.set(AlarmManager.RTC_WAKEUP, gregorianCalendar.getTimeInMillis(), pendingIntent(name, date, requestCode, time));
     }
 
     private void setAlarms(String name, int date){
         for (int i = 0; i<gregorianCalendars.size(); i++){
             int requestCode = (int) (System.currentTimeMillis()%10000 + i*10000);
-            setAlarm(name, date, requestCode, gregorianCalendars.get(i));
+            setAlarm(name, date, requestCode, String.valueOf(gregorianCalendars.get(i).getTimeInMillis()), gregorianCalendars.get(i));
         }
     }
 
-    private void setAlarm(String name, int date, int requestCode, GregorianCalendar gregorianCalendar) {
-        if (gregorianCalendar.getTimeInMillis() < System.currentTimeMillis()) {
-            gregorianCalendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, gregorianCalendar.getTimeInMillis(), 60*1000, pendingIntent(name, date, requestCode));
-    }
-
-    private PendingIntent pendingIntent(String name, int date, int requestCode) {
+    private PendingIntent pendingIntent(String name, int date, int requestCode, String time) {
         Intent intent = new Intent("com.naxesa.bodyheat");
         intent.putExtra("name", name);
         intent.putExtra("date", date);
+        intent.putExtra("time", time);
         intent.putExtra("requestcode", requestCode);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, intent, 0);
-        ClockData.pendingIntents.add(pendingIntent);
-        ClockData.intentNames.add(name);
         return pendingIntent;
-    }
-
-    public void setGregorianCalendar(GregorianCalendar gregorianCalendar) {
-        this.gregorianCalendar = gregorianCalendar;
     }
 }

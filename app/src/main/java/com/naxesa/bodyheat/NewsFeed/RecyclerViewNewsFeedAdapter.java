@@ -16,13 +16,14 @@ import java.util.ArrayList;
 
 public class RecyclerViewNewsFeedAdapter extends RecyclerView.Adapter {
 
-    private ArrayList<String> dates, contents;
+    private ArrayList<String> dates, contents, states;
     private Context context;
 
-    RecyclerViewNewsFeedAdapter(Context context, ArrayList<String> dates, ArrayList<String> contents){
+    RecyclerViewNewsFeedAdapter(Context context, ArrayList<String> dates, ArrayList<String> contents, ArrayList<String> states){
         this.context = context;
         this.dates = dates;
         this.contents = contents;
+        this.states = states;
     }
 
     @Override
@@ -35,6 +36,11 @@ public class RecyclerViewNewsFeedAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ((NewsFeedHolder)holder).date.setText(dates.get(position));
         ((NewsFeedHolder)holder).content.setText(contents.get(position));
+        if(states.get(position).equals("body_heat")){
+            ((NewsFeedHolder)holder).image.setImageResource(R.drawable.body_heat);
+        }else{
+            ((NewsFeedHolder)holder).image.setImageResource(R.drawable.alarm);
+        }
     }
 
     @Override

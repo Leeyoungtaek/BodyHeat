@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.naxesa.bodyheat.BodyHeat.BodyHeatActivity;
 import com.naxesa.bodyheat.Clock.ClockActivity;
@@ -14,7 +14,7 @@ import com.naxesa.bodyheat.Tip.TipActivity;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Views
-    private Button btnBodyHeat, btnClock, btnNewsFeed, btnTip;
+    private ImageButton btnBodyHeat, btnClock, btnNewsFeed, btnTip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +22,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         // View Reference
-        btnBodyHeat = (Button)findViewById(R.id.body_heat);
-        btnClock = (Button)findViewById(R.id.clock);
-        btnNewsFeed = (Button)findViewById(R.id.news_feed);
-        btnTip = (Button)findViewById(R.id.tip);
+        btnBodyHeat = (ImageButton) findViewById(R.id.body_heat);
+        btnClock = (ImageButton)findViewById(R.id.clock);
+        btnNewsFeed = (ImageButton)findViewById(R.id.news_feed);
+        btnTip = (ImageButton)findViewById(R.id.tip);
 
         // View Event
         btnBodyHeat.setOnClickListener(this);
@@ -55,4 +55,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         startActivity(intent);
     }
+
 }

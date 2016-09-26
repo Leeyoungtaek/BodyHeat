@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MedicineDatabaseOpenHelper extends SQLiteOpenHelper{
 
     private final String clockTable = "clock";
+    private final String medicineTable = "medicine";
 
     public MedicineDatabaseOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -21,13 +22,20 @@ public class MedicineDatabaseOpenHelper extends SQLiteOpenHelper{
         String clockSql = "create table " + clockTable + " (" +
                 "_id integer primary key autoincrement, " +
                 "name text" + ");";
+        String medicineSql = "create table " + medicineTable + " (" +
+                "_id integer primary key autoincrement, " +
+                "name text, " +
+                "date text" + ");";
         db.execSQL(clockSql);
+        db.execSQL(medicineSql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         String clockSql = "drop table if exists " + clockTable;
+        String medicineSql = "drop table if exists " + medicineTable;
         db.execSQL(clockSql);
+        db.execSQL(medicineSql);
         onCreate(db);
     }
 }
