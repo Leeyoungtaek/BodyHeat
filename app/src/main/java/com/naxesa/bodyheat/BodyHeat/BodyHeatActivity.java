@@ -20,8 +20,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.LocationListener;
-import com.naxesa.bodyheat.BodyHeat.Map.MapActivity;
 import com.naxesa.bodyheat.NewsFeed.NewsFeedDatabaseOpenHelper;
 import com.naxesa.bodyheat.R;
 
@@ -35,7 +33,7 @@ import java.util.Date;
 public class BodyHeatActivity extends Activity implements View.OnClickListener{
 
     // Views
-    private CheckBox option1, option2, option3, option4, option5;
+    private CheckBox option[] = new CheckBox[5];
     private Button btnCheckBodyheat, btnOK;
     private TextView bodyHeat;
 
@@ -80,11 +78,11 @@ public class BodyHeatActivity extends Activity implements View.OnClickListener{
         };
 
         // View Reference
-        option1 = (CheckBox)findViewById(R.id.option1);
-        option2 = (CheckBox)findViewById(R.id.option2);
-        option3 = (CheckBox)findViewById(R.id.option3);
-        option4 = (CheckBox)findViewById(R.id.option4);
-        option5 = (CheckBox)findViewById(R.id.option5);
+        option[0] = (CheckBox)findViewById(R.id.option1);
+        option[1] = (CheckBox)findViewById(R.id.option2);
+        option[2] = (CheckBox)findViewById(R.id.option3);
+        option[3] = (CheckBox)findViewById(R.id.option4);
+        option[4] = (CheckBox)findViewById(R.id.option5);
         btnCheckBodyheat = (Button)findViewById(R.id.check_body_heat);
         btnOK = (Button)findViewById(R.id.OK);
         bodyHeat = (TextView)findViewById(R.id.body_heat);
@@ -106,15 +104,15 @@ public class BodyHeatActivity extends Activity implements View.OnClickListener{
 
     private boolean checkCheckBox(){
         boolean isCheck = false;
-        if(option1.isChecked()){
+        if(option[0].isChecked()){
             isCheck = true;
-        } else if(option2.isChecked()){
+        } else if(option[1].isChecked()){
             isCheck = true;
-        } else if(option3.isChecked()){
+        } else if(option[2].isChecked()){
             isCheck = true;
-        } else if(option4.isChecked()){
+        } else if(option[3].isChecked()){
             isCheck = true;
-        } else if(option5.isChecked()){
+        } else if(option[4].isChecked()){
             isCheck = true;
         } else{
             isCheck = false;
@@ -198,7 +196,15 @@ public class BodyHeatActivity extends Activity implements View.OnClickListener{
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = transFormat.format(from);
 
-        String content = "체온 측정 : " + bodyHeatValue + "도";
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i<option.length; i++){
+            if(option[i].isChecked()){
+                stringBuffer.append(option[i].getText() + ", ");
+            }
+        }
+        stringBuffer.delete(stringBuffer.length()-2, stringBuffer.length());
+
+        String content = "체온 측정 : " + bodyHeatValue + "도" + "\n 증상 : " + stringBuffer.toString();
 
         ContentValues values = new ContentValues();
         values.put("state", "body_heat");
